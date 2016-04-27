@@ -2218,10 +2218,10 @@ def relu(x, alpha=0):
     # TODO: Check if it's optimal for CPU as well; add an "if" clause if not.
     # TODO: Check if there's a faster way for the gradient; create an Op if so.
     if alpha == 0:
-        return 0.5 * (x + abs(x))
+        return 0.5 * (x + abs(x)).astype(theano.config.floatX)
     else:
-        f1 = 0.5 * (1 + alpha)
-        f2 = 0.5 * (1 - alpha)
+        f1 = (0.5 * (1 + alpha)).astype(theano.config.floatX)
+        f2 = (0.5 * (1 - alpha)).astype(theano.config.floatX)
         return f1 * x + f2 * abs(x)
 
 

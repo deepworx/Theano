@@ -3,7 +3,7 @@ from functools import wraps
 
 import numpy
 
-from theano import scalar as scal, Constant
+from theano import scalar as scal, Constant, config
 from theano.gof import local_optimizer
 from theano.tensor import (DimShuffle, get_scalar_constant_value,
                            NotScalarConstantError)
@@ -11,7 +11,7 @@ from theano.tensor import (DimShuffle, get_scalar_constant_value,
 from .basic_ops import GpuFromHost, HostFromGpu, GpuAllocEmpty
 from .elemwise import GpuDimShuffle, GpuElemwise
 
-_one = scal.constant(numpy.asarray(1.0, dtype='float64'))
+_one = scal.constant(numpy.asarray(1.0, dtype=config.floatX))
 
 
 def grab_cpu_scalar(v, nd):

@@ -371,8 +371,8 @@ class GpuDnnConvDesc(COp):
         return (super(GpuDnnConvDesc, self).c_code_cache_version(), version())
 
 # scalar constants
-_zero = constant(numpy.asarray(0.0, dtype='float64'))
-_one = constant(numpy.asarray(1.0, dtype='float64'))
+_zero = constant(numpy.asarray(0.0, dtype=config.floatX))
+_one = constant(numpy.asarray(1.0, dtype=config.floatX))
 
 
 def ensure_dt(val, default, name, dtype):
