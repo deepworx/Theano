@@ -24,11 +24,11 @@ from . import multinomial
 
 import theano.sandbox.cuda
 from theano.sandbox.cuda import GpuOp
-from theano.sandbox.gpuarray.basic_ops import GpuKernelBase, Kernel
-from theano.sandbox.gpuarray.type import GpuArrayType
-from theano.sandbox.gpuarray.fp16_help import write_w
-from theano.sandbox.gpuarray.opt import (register_opt as register_gpua,
-                                         host_from_gpu as host_from_gpua)
+from theano.gpuarray.basic_ops import GpuKernelBase, Kernel
+from theano.gpuarray.type import GpuArrayType
+from theano.gpuarray.fp16_help import write_w
+from theano.gpuarray.opt import (register_opt as register_gpua,
+                                 host_from_gpu as host_from_gpua)
 if theano.sandbox.cuda.cuda_available:
     from theano.sandbox.cuda import (CudaNdarrayType,
                                      float32_shared_constructor)
@@ -1205,6 +1205,7 @@ class MRG_RandomStreams(object):
         self.rstate = multMatVect(self.rstate, A1p134, M1, A2p134, M2)
         assert self.rstate.dtype == numpy.int32
 
+    @theano.configparser.change_flags(compute_test_value='off')
     def get_substream_rstates(self, n_streams, dtype, inc_rstate=True):
         # TODO : need description for parameter and return
         """

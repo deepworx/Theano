@@ -46,7 +46,7 @@ from .subtensor import (GpuIncSubtensor, GpuSubtensor,
                         GpuAdvancedIncSubtensor1_dev20)
 from .opt_util import alpha_merge, output_merge
 
-_logger = logging.getLogger("theano.sandbox.gpuarray.opt")
+_logger = logging.getLogger("theano.gpuarray.opt")
 
 gpu_optimizer = EquilibriumDB()
 gpu_cut_copies = EquilibriumDB()
@@ -209,7 +209,7 @@ gpu_seqopt.register('InputToGpuArrayOptimizer', InputToGpuOptimizer(),
                     0, 'fast_run', 'fast_compile', 'merge')
 
 
-@local_optimizer([GpuFromHost, GpuToGpu, host_from_gpu])
+@local_optimizer([GpuFromHost, GpuToGpu, HostFromGpu])
 def local_cut_gpu_transfers(node):
     # gpu[ab] -> host -> gpub
     if (isinstance(node.op, GpuFromHost) and
@@ -255,7 +255,7 @@ def local_cut_gpu_transfers(node):
                     return [node.op(n2.inputs[0])]
 
 gpu_cut_copies.register('cut_gpua_host_transfers', local_cut_gpu_transfers,
-                        'fast_compile', 'fast_run', 'inplace', 'gpuarray')
+                        'fast_compile', 'fast_run', 'gpuarray')
 gpu_cut_copies.register('cut_gpua_constant_transfers',
                         tensor.opt.constant_folding,
                         'fast_compile', 'fast_run', 'gpuarray')
