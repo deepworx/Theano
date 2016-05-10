@@ -5228,11 +5228,7 @@ def local_opt_alloc(node):
                     if to_prod:
                         casted = T.mul(*to_prod).astype(str(input.dtype))
                         if isinstance(node.op, T.Sum):
-<<<<<<< HEAD
-                            val *= T.mul(*to_prod).astype(str(val.dtype))
-=======
                             val *= casted
->>>>>>> upstream/master
                         else:
                             val = val ** casted
                     return [T.alloc(val,
