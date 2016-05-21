@@ -235,11 +235,12 @@ AddConfigVar('gpuarray.sync',
              in_c_key=True)
 
 AddConfigVar('gpuarray.preallocate',
-             """If 0 it doesn't do anything.  If between 0 and 1 it
-             will preallocate that fraction of the total GPU memory.
-             If 1 or greater it will preallocate that amount of memory
-             (in megabytes).""",
-             FloatParam(0, lambda i: i >= 0),
+             """If negative it disables the allocation cache. If
+             between 0 and 1 it enables the allocation cache and
+             preallocates that fraction of the total GPU memory.  If 1
+             or greater it will preallocate that amount of memory (in
+             megabytes).""",
+             FloatParam(0),
              in_c_key=False)
 
 
@@ -571,6 +572,17 @@ AddConfigVar(
     # assert y.tag.trace
     IntParam(8),
     in_c_key=False)
+
+AddConfigVar(
+    'traceback.compile_limit',
+    "The number of stack to trace to keep during compilation. -1 mean all."
+    " If greater then 0, will also make us save Theano internal stack trace.",
+    IntParam(0),
+    in_c_key=False)
+
+AddConfigVar('experimental.mrg',
+             "Another random number generator that work on the gpu",
+             BoolParam(False))
 
 AddConfigVar('experimental.unpickle_gpu_on_cpu',
              "Allow unpickling of pickled CudaNdarrays as numpy.ndarrays."
@@ -1414,6 +1426,11 @@ AddConfigVar('scan.allow_output_prealloc',
              "Allow/disallow memory preallocation for outputs inside of scan "
              "(default: True)",
              BoolParam(True),
+             in_c_key=False)
+
+AddConfigVar('scan.debug',
+             "If True, enable extra verbose output related to scan",
+             BoolParam(False),
              in_c_key=False)
 
 AddConfigVar('pycuda.init',
