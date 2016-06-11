@@ -122,8 +122,6 @@ An op has to implement some methods defined in the the interface of
 the method :func:`make_node` or :attr:`itypes`, :attr:`otypes` and one of the 
 implementation methods, either :func:`perform`, :meth:`Op.c_code` 
 or :func:`make_thunk`.
-method :func:`make_node` and one of the implementation methods, either 
-:func:`perform`, :meth:`Op.c_code` or :func:`make_thunk`.
 
   :func:`make_node` method creates an Apply node representing the application
   of the op on the inputs provided. This method is reponsible for three things:
@@ -681,8 +679,8 @@ For instance, to verify the Rop method of the DoubleOp, you can use this:
 Testing GPU Ops
 ^^^^^^^^^^^^^^^
 
-Ops to be executed on the GPU should inherit from the
-``theano.sandbox.cuda.GpuOp`` and not ``theano.Op``. This allows
+When using the old GPU backend, Ops to be executed on the GPU should inherit
+from ``theano.sandbox.cuda.GpuOp`` and not ``theano.Op``. This allows
 Theano to distinguish them. Currently, we use this to test if the
 NVIDIA driver works correctly with our sum reduction code on the GPU.
 

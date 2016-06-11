@@ -117,21 +117,24 @@ A contributor made rpm package for Mandriva_ 2010.2 of Theano 0.3.1.
 
 .. _linux_basic:
 
-Docker images
-~~~~~~~~~~~~~
+Docker
+~~~~~~
 
-Builds of Theano are available as `Docker <https://www.docker.com/whatisdocker>`_ images:
-`Theano Docker (CPU) <https://hub.docker.com/r/kaixhin/theano/>`_ or `Theano Docker (CUDA) <https://hub.docker.com/r/kaixhin/cuda-theano/>`_.
-These are updated on a weekly basis with bleeding-edge builds of Theano. Examples of running bash in a Docker container
-are as follows:
+Builds of Theano are available as `Docker <https://www.docker.com>`_
+images: `Theano Docker (CPU) <https://hub.docker.com/r/kaixhin/theano/>`_ or
+`Theano Docker (CUDA) <https://hub.docker.com/r/kaixhin/cuda-theano/>`_. These
+are updated on a weekly basis with bleeding-edge builds of Theano.
+Examples of running bash in a Docker container are as follows:
 
 .. code-block:: bash
 
     sudo docker run -it kaixhin/theano
-    sudo docker run -it --device /dev/nvidiactl --device /dev/nvidia-uvm --device /dev/nvidia0 kaixhin/cuda-theano:7.0
+    sudo nvidia-docker run -it kaixhin/cuda-theano:7.0
 
-For a guide to Docker, see the `official docs <https://docs.docker.com/userguide/>`_. For more details on how to use the
-Theano Docker images, including requirements for CUDA support, consult the `source project <https://github.com/Kaixhin/dockerfiles>`_.
+For a guide to Docker, see the `official docs <https://docs.docker.com>`_.
+CUDA support requires `NVIDIA Docker <https://github.com/NVIDIA/nvidia-docker>`_.
+For more details on how to use the Theano Docker images,
+consult the `source project <https://github.com/Kaixhin/dockerfiles>`_.
 
 Basic user install instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,7 +378,7 @@ If ``theano-nose`` is not found by your shell, you will need to add
 
     If you want GPU-related tests to run on a specific GPU device, and not
     the default one, you should use :attr:`~config.init_gpu_device`.
-    For instance: ``THEANO_FLAGS=device=cpu,init_gpu_device=gpu1``.
+    For instance: ``THEANO_FLAGS=device=cpu,init_gpu_device=cuda1``.
 
     See :ref:`libdoc_config` for more information on how to change these
     configuration options.
@@ -508,25 +511,25 @@ Any one of them is enough.
 
     :ref:`Ubuntu instructions <install_ubuntu_gpu>`.
 
-
+Next, install `libgpuarray <http://deeplearning.net/software/libgpuarray/installation.html>`_.
 
 Once that is done, the only thing left is to change the ``device`` option to name the GPU device in your
 computer, and set the default floating point computations to float32.
-For example: ``THEANO_FLAGS='cuda.root=/path/to/cuda/root,device=gpu,floatX=float32'``.
+For example: ``THEANO_FLAGS='cuda.root=/path/to/cuda/root,device=cuda,floatX=float32'``.
 You can also set these options in the .theanorc file's ``[global]`` section:
 
      .. code-block:: cfg
 
         [global]
-        device = gpu
+        device = cuda
         floatX = float32
 
 Note that:
 
-    * If your computer has multiple GPUs and you use 'device=gpu', the driver
-      selects the one to use (usually gpu0).
-    * You can use the program nvida-smi to change this policy.
-    * You can choose one specific GPU by specifying 'device=gpuX', with X the
+    * If your computer has multiple GPUs and you use 'device=cuda', the driver
+      selects the one to use (usually cuda0).
+    * You can use the program ``nvidia-smi`` to change this policy.
+    * You can choose one specific GPU by specifying 'device=cudaX', with X the
       the corresponding GPU index (0, 1, 2, ...)
     * By default, when ``device`` indicates preference for GPU computations,
       Theano will fall back to the CPU if there is a problem with the GPU.
@@ -793,6 +796,8 @@ setup CUDA, but be aware of the following caveats:
    * If CUDA seems unable to find a CUDA-capable GPU, you may need to manually
      toggle your GPU on, which can be done with
      `gfxCardStatus <http://codykrieger.com/gfxCardStatus>`__.
+
+Next, install `libgpuarray <http://deeplearning.net/software/libgpuarray/installation.html>`_.
 
 Once your setup is complete, head to :ref:`using_gpu` to find how to verify
 everything is working properly.
