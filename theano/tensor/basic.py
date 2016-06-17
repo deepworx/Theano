@@ -590,6 +590,8 @@ def get_scalar_constant_value(orig_v, elemwise=True,
     ----------
     elemwise : bool
         If False, we won't try to go into elemwise. So this call is faster.
+        But we still investigate in Second Elemwise (as this is a substitute
+        for Alloc)
     only_process_constants : bool
         If True, we only attempt to obtain the value of `orig_v` if it's
         directly constant and don't try to dig through dimshuffles, fills,
@@ -650,14 +652,18 @@ def get_scalar_constant_value(orig_v, elemwise=True,
                     ret = [[None]]
                     v.owner.op.perform(v.owner, const, ret)
                     return ret[0][0].copy()
-            elif elemwise and isinstance(v.owner.op, Elemwise):
+            # In fast_compile, we don't enable local_fill_to_alloc, so
+            # we need to investigate Second as Alloc. So elemwise
+            # don't disable the check for Second.
+            elif isinstance(v.owner.op, Elemwise):
                 if isinstance(v.owner.op.scalar_op, scal.Second):
                     # We don't need both input to be constant for second
                     shp, val = v.owner.inputs
                     v = val
                     continue
-                elif isinstance(v.owner.op.scalar_op,
-                                get_scalar_constant_value_elemwises):
+                elif elemwise and isinstance(
+                        v.owner.op.scalar_op,
+                        get_scalar_constant_value_elemwises):
                     const = [get_scalar_constant_value(i)
                              for i in v.owner.inputs]
                     ret = [[None]]
@@ -2259,7 +2265,17 @@ pprint.assign(fill, printing.FunctionPrinter('fill'))
 
 @constructor
 def ones_like(model, dtype=None):
-    """equivalent of numpy.ones_like"""
+    """equivalent of numpy.ones_like
+    Parameters
+    ----------
+    model : tensor
+    dtype : data-type, optional
+
+    Returns
+    -------
+    tensor
+        tensor the shape of model containing ones of the type of dtype.
+    """
     if dtype is None:
         dtype = model.type.dtype
     ret = fill(model, constant(1.0, dtype=dtype))
@@ -2268,7 +2284,18 @@ def ones_like(model, dtype=None):
 
 @constructor
 def zeros_like(model, dtype=None):
-    """equivalent of numpy.zeros_like"""
+    """equivalent of numpy.zeros_like
+    Parameters
+    ----------
+    model : tensor
+    dtype : data-type, optional
+
+    Returns
+    -------
+    tensor
+        tensor the shape of model containing zeros of the type of dtype.
+    """
+
     if dtype is None:
         dtype = model.type.dtype
     return fill(model, constant(0.0, dtype=dtype))
